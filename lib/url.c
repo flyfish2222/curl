@@ -2005,6 +2005,8 @@ static CURLcode uc_to_curlcode(CURLUcode uc)
     return CURLE_UNSUPPORTED_PROTOCOL;
   case CURLUE_OUT_OF_MEMORY:
     return CURLE_OUT_OF_MEMORY;
+  case CURLUE_USER_NOT_ALLOWED:
+    return CURLE_LOGIN_DENIED;
   }
 }
 
@@ -2040,7 +2042,10 @@ static CURLcode parseurlandfillconn(struct Curl_easy *data,
   }
 
   uc = curl_url_set(uh, CURLUPART_URL, data->change.url,
-                    CURLU_GUESS_SCHEME | CURLU_NON_SUPPORT_SCHEME |
+                    CURLU_GUESS_SCHEME |
+                    CURLU_NON_SUPPORT_SCHEME |
+                    (data->set.disallow_username_in_url ?
+                     CURLU_DISALLOW_USER : 0) |
                     (data->set.path_as_is ? CURLU_PATH_AS_IS : 0));
   if(uc)
     return uc_to_curlcode(uc);
