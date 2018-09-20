@@ -92,6 +92,7 @@ bool curl_win32_idn_to_ascii(const char *in, char **out);
 #include "non-ascii.h"
 #include "inet_pton.h"
 #include "getinfo.h"
+#include "urlapi-int.h"
 
 /* And now for the protocols */
 #include "ftp.h"
@@ -2024,6 +2025,20 @@ static CURLcode parseurlandfillconn(struct Curl_easy *data,
   uh = data->state.uh = curl_url();
   if(!uh)
     return CURLE_OUT_OF_MEMORY;
+
+  if(data->set.str[STRING_DEFAULT_PROTOCOL] &&
+     !Curl_is_absolute_url(data->change.url, NULL, MAX_SCHEME_LEN)) {
+    char *url;
+    if(data->change.url_alloc)
+      free(data->change.url);
+    url = aprintf("%s://%s", data->set.str[STRING_DEFAULT_PROTOCOL],
+                  data->change.url);
+    if(!url)
+      return CURLE_OUT_OF_MEMORY;
+    data->change.url = url;
+    data->change.url_alloc = TRUE;
+  }
+
   uc = curl_url_set(uh, CURLUPART_URL, data->change.url, CURLU_GUESS_SCHEME);
   if(uc)
     return uc_to_curlcode(uc);

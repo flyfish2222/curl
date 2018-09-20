@@ -53,10 +53,6 @@ struct Curl_URL {
 
 #define DEFAULT_SCHEME "https"
 
-/* scheme is not URL encoded, the longest libcurl supported ones are 6
-   letters */
-#define MAX_SCHEME_LEN 8
-
 static void free_urlhandle(struct Curl_URL *u)
 {
   free(u->scheme);

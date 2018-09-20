@@ -1507,7 +1507,7 @@ CURLcode Curl_follow(struct Curl_easy *data,
     }
   }
 
-  if(Curl_is_absolute_url(newurl, NULL, 8))
+  if(Curl_is_absolute_url(newurl, NULL, MAX_SCHEME_LEN))
     /* This is an absolute URL, don't allow the custom port number */
     disallowport = TRUE;
 
