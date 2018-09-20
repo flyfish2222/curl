@@ -1513,11 +1513,11 @@ CURLcode Curl_follow(struct Curl_easy *data,
 
   DEBUGASSERT(data->state.uh);
   uc = curl_url_set(data->state.uh, CURLUPART_URL, newurl, 0);
+  free(newurl);
   if(uc)
     /* TODO: consider an error code remap here */
     return CURLE_URL_MALFORMAT;
 
-  free(newurl);
   uc = curl_url_get(data->state.uh, CURLUPART_URL, &newurl, 0);
   if(uc)
     /* TODO: consider an error code remap here */
