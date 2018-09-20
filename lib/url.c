@@ -2040,7 +2040,7 @@ static CURLcode parseurlandfillconn(struct Curl_easy *data,
   }
 
   uc = curl_url_set(uh, CURLUPART_URL, data->change.url,
-                    CURLU_GUESS_SCHEME |
+                    CURLU_GUESS_SCHEME | CURLU_NON_SUPPORT_SCHEME |
                     (data->set.path_as_is ? CURLU_PATH_AS_IS : 0));
   if(uc)
     return uc_to_curlcode(uc);
@@ -2048,6 +2048,10 @@ static CURLcode parseurlandfillconn(struct Curl_easy *data,
   uc = curl_url_get(uh, CURLUPART_SCHEME, &data->state.up.scheme, 0);
   if(uc)
     return uc_to_curlcode(uc);
+
+  result = findprotocol(data, conn, data->state.up.scheme);
+  if(result)
+    return result;
 
   uc = curl_url_get(uh, CURLUPART_USER, &data->state.up.user,
                     CURLU_URLDECODE);
@@ -2103,10 +2107,6 @@ static CURLcode parseurlandfillconn(struct Curl_easy *data,
   }
 
   (void)curl_url_get(uh, CURLUPART_QUERY, &data->state.up.query, 0);
-
-  result = findprotocol(data, conn, data->state.up.scheme);
-  if(result)
-    return result;
 
   hostname = data->state.up.hostname;
   if(!hostname)
