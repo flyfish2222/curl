@@ -2039,7 +2039,9 @@ static CURLcode parseurlandfillconn(struct Curl_easy *data,
     data->change.url_alloc = TRUE;
   }
 
-  uc = curl_url_set(uh, CURLUPART_URL, data->change.url, CURLU_GUESS_SCHEME);
+  uc = curl_url_set(uh, CURLUPART_URL, data->change.url,
+                    CURLU_GUESS_SCHEME |
+                    (data->set.path_as_is ? CURLU_PATH_AS_IS : 0));
   if(uc)
     return uc_to_curlcode(uc);
 
